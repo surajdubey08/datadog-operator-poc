@@ -5,6 +5,8 @@ metadata:
   namespace: datadog
 spec:
   global:
+    kubelet:
+      tlsVerify: false
     clusterName: "datadog-poc-k8s-cluster"
     registry: "gcr.io/datadoghq"
     site: "us3.datadoghq.com"
@@ -36,4 +38,6 @@ spec:
     usm:
       enabled: true
     npm:
+      enabled: true
+    orchestratorExplorer:
       enabled: true
