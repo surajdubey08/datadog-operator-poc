@@ -45,3 +45,26 @@ jobs:
         kubectl get nodes
         echo --------------------------------------------
         helm version
+
+    - name: Create Required Namespaces
+      run: |
+        kubectl create namespace datadog || true
+
+    - name: Create Datadog API Key Secret
+      run: |
+        kubectl create secret generic datadog-secret \
+          --namespace datadog \
+          --from-literal=api-key="${{ secrets.DD_API_KEY }}"
+
+    - name: Install Datadog Operator
+      id: install-dd-operator
+      if: inputs.dd-action == 'Install'
+      run: |
+        helm repo add datadog https://helm.datadoghq.com
+
+        helm install datadog-operator datadog/datadog-operator --namespace datadog
+
+    - name: Deploy Datadog Agent Configuration
+      if: inputs.dd-action == 'Install'
+      run: |
+        kubectl apply -f dd-agent/datadog-agent.yaml
