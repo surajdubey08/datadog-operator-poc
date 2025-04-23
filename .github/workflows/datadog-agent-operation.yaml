@@ -63,7 +63,7 @@ jobs:
       run: |
         helm repo add datadog https://helm.datadoghq.com
 
-        helm install datadog-operator datadog/datadog-operator --namespace datadog
+        helm upgrade --install datadog-operator datadog/datadog-operator --namespace datadog
 
     - name: Deploy Datadog Agent Configuration
       if: inputs.dd-action == 'Install'
