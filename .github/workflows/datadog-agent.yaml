@@ -1,0 +1,44 @@
+name: Deploy Datadog Agent
+
+on: 
+  workflow_dispatch: 
+    inputs:
+      dd-action:
+        description: Install or Un-install DataDog Agent
+        default: 'install'
+        required: true
+        type: string
+      environments:
+        description: Select the environment to deploy the changes
+        default: 'US-DEV'
+        required: true
+        options:
+          - US-DEV
+          - US-QA
+        type: choice
+
+jobs:
+  dd-agent:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set Kubeconfig
+      uses: azure/k8s-set-context@v4
+      with:
+        method: kubeconfig
+        kubeconfig: ${{secrets.DD_POC_CLUSTER}}
+
+    - name: Install Helm
+      uses: azure/setup-helm@v4
+      with:
+        version: latest
+
+    - name: Fetch K8s Cluster Details
+      run: |
+        kubectl version
+        echo --------------------------------------------
+        kubectl get nodes
+        echo --------------------------------------------
+        helm version
